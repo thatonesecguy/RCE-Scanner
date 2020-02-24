@@ -2,9 +2,12 @@
 
 A python tool to scan for Remote Code Execution in PHP projects.
 
-Note : Runs only on Python3.x ... No support for Python2!
+It will help you to perform a quick source code review for php web applications and try to extract any unsafe functions on the project and print them out to you.
 
 ![alt text](https://github.com/harshil-shah004/phpRCE-Scanner/blob/master/RCE-Scanner.png)
+
+Note : Runs only on Python3.x ... No support for Python2!
+
 
 # Installation
 `git clone https://github.com/harshil-shah004/phpRCE-Scanner.git`
