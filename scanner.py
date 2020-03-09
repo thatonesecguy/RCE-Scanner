@@ -23,23 +23,47 @@ if len(sys.argv) != 3:
 path = sys.argv[1]
 extension = sys.argv[2]
 final_files = []
-reg = '''\((.*)\);'''
-unsafe = ["system", "shell_exec", "exec", "passthru", "eval"]
+reg_php = '''\((.*)\);'''		# regular expression for php
+reg_py = '''\((.*)\)'''			# regular expression for python
+unsafe_php = ["system", "shell_exec", "exec", "passthru", "eval"]
+unsafe_python = ["os.system", "os.popen", "subprocess.Popen", "subprocess.call", "subprocess.run"]	# 2 unsafe lists used - php and python
 
 def spider(script_path):
     if os.path.exists(path) is False:
         cprint("[-]Directory not exist", "red")
         sys.exit(0)
     cprint("[+] Scanning started for the script ..", "green")
-    for root, dirs, files in os.walk(script_path, topdown=False):
-            for fi in files:
-                dfile = os.path.join(root, fi)
-                if dfile.endswith(".php"):
-                    final_files.append(dfile)
-    cprint("[+] {0} php files found".format(len(final_files)), "green")
+
+    if extension=='php':							# Seperate code blocks for file collection based on the extension given by the user
+    	for root, dirs, files in os.walk(script_path, topdown=False):
+                for fi in files:
+                    dfile = os.path.join(root, fi)
+                    if dfile.endswith(".php"):
+                        final_files.append(dfile)
+    	cprint("[+] {0} php files found".format(len(final_files)), "green")
+
+    elif(extension=='py'):							# For Python files
+        for root, dirs, files in os.walk(script_path, topdown=False):
+                for fi in files:
+                    dfile = os.path.join(root, fi)
+                    if dfile.endswith(".py"):
+                        final_files.append(dfile)
+        cprint("[+] {0} python files found".format(len(final_files)),"green")
+
+    else :									# php/py are the only valid arguments
+        cprint("[-] {0} format is not supported.format(extension)","red")
+        cprint("[-] Valid formats : php / py","red")
+        sys.exit(0)
 
 def scanner(files_list):
     results = []
+
+    if extension=='php':	# Getting regex and list of unsafe functions for php
+        unsafe = unsafe_php
+        reg = reg_php
+    elif extension=='py':	# Getting regex and list of unsafe functions for python
+        unsafe=unsafe_python
+        reg = reg_py
     for fi in files_list:
         f = open(fi, "r")
         data = f.readlines()
@@ -60,3 +84,6 @@ if __name__ == "__main__":
     banner()
     spider(path)
     scanner(final_files)
+
+
+
